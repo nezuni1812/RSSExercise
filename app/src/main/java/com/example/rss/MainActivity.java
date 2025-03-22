@@ -2,6 +2,8 @@ package com.example.rss;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        //EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -72,25 +74,45 @@ public class MainActivity extends AppCompatActivity {
         bao = findViewById(R.id.bao);
         NewAdapter adapter = new NewAdapter(this, Arrays.asList(news), Arrays.asList(logo));
         bao.setAdapter(adapter);
+
+        GridView gridView = findViewById(R.id.bao);
+        gridView.setPadding(10, 10, 10, 10);
+        gridView.setSelector(R.drawable.border_item);
+
         bao.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(MainActivity.this, "Bao " + i, Toast.LENGTH_SHORT).show();
+                // Toast.makeText(MainActivity.this, "Bao " + i, Toast.LENGTH_SHORT).show();
                 Intent callShowHeadlines = new Intent(MainActivity.this, ShowNews.class);
                 Bundle myData = new Bundle();
-                myData.putString("newsName", "ThanhNien");
+
+                String selectedNews = news[i];
+                myData.putString("newsName", selectedNews);
+                String[][] selectedNewsArray;
+                switch (i) {
+                    case 0:
+                        selectedNewsArray = tienphongNews;
+                        break;
+                    case 1:
+                        selectedNewsArray = thanhnienNews;
+                        break;
+                    case 2:
+                        selectedNewsArray = vietnamnetNews;
+                        break;
+                    default:
+                        selectedNewsArray = new String[0][0];
+                }
 
                 ArrayList<String> channelNames = new ArrayList<>();
-                for (int j = 0; j < thanhnienNews.length; j++) {
-                    channelNames.add(thanhnienNews[j][1]); // Lấy cột thứ 2 (tên chuyên mục)
+                ArrayList<String> channelUrl = new ArrayList<>();
+
+                for (int j = 0; j < selectedNewsArray.length; j++) {
+                    channelNames.add(selectedNewsArray[j][1]); // Lấy cột thứ 2 (tên chuyên mục)
+                    channelUrl.add(selectedNewsArray[j][0]); // Lấy cột thứ 1 (url chuyên mục)
                 }
                 myData.putStringArrayList("channelNames", channelNames);
-
-                ArrayList<String> channelUrl = new ArrayList<>();
-                for (int j = 0; j < thanhnienNews.length; j++) {
-                    channelUrl.add(thanhnienNews[j][0]); // Lấy cột thứ 2 (tên chuyên mục)
-                }
                 myData.putStringArrayList("channelUrl", channelUrl);
+
                 callShowHeadlines.putExtras(myData);
                 startActivity(callShowHeadlines);
 
@@ -147,7 +169,10 @@ public class MainActivity extends AppCompatActivity {
             if (resId != 0) {
                 holder.newsLogo.setImageResource(resId);
             }
-
+            
+            convertView.setBackgroundResource(R.drawable.border_item);
+            int padding = 20;
+            convertView.setPadding(padding, padding, padding, padding);
             return convertView;
         }
 

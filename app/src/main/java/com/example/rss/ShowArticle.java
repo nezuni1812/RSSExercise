@@ -4,6 +4,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.text.HtmlCompat;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -47,12 +50,13 @@ public class ShowArticle extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ShowArticle.this);
-
-                builder.setTitle(allNews.get(i).getTitle()).setMessage(allNews.get(i).getDescription());
+                String desc = allNews.get(i).getDescription().replaceAll("￼", "");
+                String formattedMessage = "<b>" + allNews.get(i).getTitle() + "</b><br><br>" + desc;
+                builder.setTitle(bun.getString("caption")).setMessage(Html.fromHtml(formattedMessage, Html.FROM_HTML_MODE_LEGACY));
                 builder.setPositiveButton("More", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(ShowArticle.this, "More", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(ShowArticle.this, "More", Toast.LENGTH_SHORT).show();
                         adapterView.getItemIdAtPosition(i);
                         Intent browser = new Intent(Intent.ACTION_VIEW, Uri.parse(allNews.get(i).getLink()));
                         startActivity(browser);
@@ -61,7 +65,7 @@ public class ShowArticle extends AppCompatActivity {
                 builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(ShowArticle.this, "Close", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(ShowArticle.this, "Close", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     }
                 });

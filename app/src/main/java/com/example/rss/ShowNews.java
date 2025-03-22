@@ -26,7 +26,7 @@ public class ShowNews extends AppCompatActivity {
 //        urlAddress = myBundle.getString("urlAddress"); urlCaption = myBundle.getString(“urlCaption”);
 
         tieu = findViewById(R.id.tieu);
-        tieu.setText(bun.getString("newsName"));
+        tieu.setText("Channels in " + bun.getString("newsName"));
 
         ArrayList<String> channels = bun.getStringArrayList("channelNames");
         ArrayList<String> urls = bun.getStringArrayList("channelUrl");
@@ -42,7 +42,7 @@ public class ShowNews extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent callShowIndividualNews = new Intent(ShowNews.this, ShowArticle.class);
                 Bundle myData = new Bundle();
-                myData.putString("caption", "ThanhNien - "  + channels.get(i));
+                myData.putString("caption", "Items in Channel " + channels.get(i) + " - "  +  bun.getString("newsName"));
                 System.out.println(urls.get(i));
                 myData.putString("url", urls.get(i));
                 callShowIndividualNews.putExtras(myData);

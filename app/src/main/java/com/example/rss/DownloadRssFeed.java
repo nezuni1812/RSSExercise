@@ -3,6 +3,8 @@ package com.example.rss;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
@@ -62,14 +64,25 @@ public class DownloadRssFeed extends AsyncTask<String, Void, ArrayList<SingleIte
 // together into a POJO ‘SingleItem’ object, and return it
         try {
             Element entry = (Element) nodeList.item(i);
-            Element title = (Element) entry.getElementsByTagName("title").item(0);
-            Element description = (Element) entry.getElementsByTagName("description").item(0);
-            Element pubDate = (Element) entry.getElementsByTagName("pubDate").item(0);
-            Element link = (Element) entry.getElementsByTagName("link").item(0);
-            String titleValue = title.getFirstChild().getNodeValue();
-            String descriptionValue = description.getFirstChild().getNodeValue();
-            String dateValue = pubDate.getFirstChild().getNodeValue();
-            String linkValue = link.getFirstChild().getNodeValue();
+
+            String titleValue = entry.getElementsByTagName("title").item(0) != null ?
+                    entry.getElementsByTagName("title").item(0).getTextContent() : "Không có tiêu đề";
+            String descriptionValue = entry.getElementsByTagName("description").item(0) != null ?
+                    entry.getElementsByTagName("description").item(0).getTextContent() : "Không có mô tả";
+            String dateValue = entry.getElementsByTagName("pubDate").item(0) != null ?
+                    entry.getElementsByTagName("pubDate").item(0).getTextContent() : "Không có ngày";
+            String linkValue = entry.getElementsByTagName("link").item(0) != null ?
+                    entry.getElementsByTagName("link").item(0).getTextContent() : "#";
+
+//            String titleValue = title.getFirstChild().getNodeValue();
+//            String descriptionValue = description.getFirstChild().getNodeValue();
+//            String dateValue = pubDate.getFirstChild().getNodeValue();
+//            String linkValue = link.getFirstChild().getNodeValue();
+
+            titleValue = Html.fromHtml(Html.fromHtml(titleValue, Html.FROM_HTML_MODE_LEGACY).toString(), Html.FROM_HTML_MODE_LEGACY).toString().trim();
+            descriptionValue = Html.fromHtml(Html.fromHtml(descriptionValue, Html.FROM_HTML_MODE_LEGACY).toString(), Html.FROM_HTML_MODE_LEGACY).toString().trim();
+
+
             SingleItem singleItem = new SingleItem(dateValue, titleValue, descriptionValue, linkValue);
             return singleItem;
         } catch (DOMException e) {
